@@ -20,19 +20,6 @@ public class CampaignMapper {
                 .build();
     }
 
-    public Campaign convertToEntity(CampaignDto campaignDto) {
-        return Campaign.builder()
-                .id(campaignDto.getId())
-                .name(campaignDto.getName())
-                .keywords(campaignDto.getKeywords())
-                .bidAmount(campaignDto.getBidAmount())
-                .campaignFund(campaignDto.getCampaignFund())
-                .status(campaignDto.getStatus())
-                .town(campaignDto.getTown())
-                .radius(campaignDto.getRadius())
-                .build();
-    }
-
     public Campaign convertToEntity(CampaignRequest campaignRequest) {
         return Campaign.builder()
                 .name(campaignRequest.getName())
