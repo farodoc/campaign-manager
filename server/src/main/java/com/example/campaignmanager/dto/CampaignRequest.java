@@ -27,7 +27,7 @@ public class CampaignRequest {
     private Boolean status;
 
     @NotNull(message = "town should not be null")
-    @Pattern(regexp = "^[a-zA-Z]*$", message = "town should contain only letters")
+    @Pattern(regexp = "^[a-zA-Z ]*$", message = "town should contain only letters")
     private String town;
 
     @Min(value = 1, message = "radius should be greater or equal to 1")
