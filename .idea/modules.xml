@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/campaign-manager.iml" filepath="$PROJECT_DIR$/.idea/campaign-manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/campaignmanager.main.iml" filepath="$PROJECT_DIR$/.idea/modules/campaignmanager.main.iml" />
     </modules>
   </component>
 </project>
