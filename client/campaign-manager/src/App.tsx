@@ -27,7 +27,6 @@ import "./App.css";
 function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [towns, setTowns] = useState<string[]>([]);
-  // TODO: Currently only one keyword is supported, but the API supports multiple keywords
   const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
   const [userBalance, setUserBalance] = useState<number>(0);
 
@@ -79,8 +78,11 @@ function App() {
     fetchCampaigns();
   };
 
-  const handleKeywordChange = async (value: string) => {
-    setNewCampaign({ ...newCampaign, keywords: [value] });
+  const handleKeywordChange = async (
+    _: React.SyntheticEvent,
+    values: string[]
+  ) => {
+    setNewCampaign({ ...newCampaign, keywords: values });
   };
 
   const handleUpdateCampaign = async (id: number, campaign: Campaign) => {
@@ -116,9 +118,11 @@ function App() {
           margin="normal"
         />
         <Autocomplete
+          multiple
           freeSolo
           options={keywordSuggestions}
-          onInputChange={(_, value) => handleKeywordChange(value)}
+          value={newCampaign.keywords}
+          onChange={handleKeywordChange}
           renderInput={(params) => (
             <TextField {...params} label="Keywords" margin="normal" />
           )}
