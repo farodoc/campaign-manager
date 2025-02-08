@@ -21,6 +21,7 @@ import {
   Box,
   Autocomplete,
   MenuItem,
+  Alert,
 } from "@mui/material";
 import "./App.css";
 
@@ -29,6 +30,9 @@ function App() {
   const [towns, setTowns] = useState<string[]>([]);
   const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
   const [userBalance, setUserBalance] = useState<number>(0);
+  const [errorMessages, setErrorMessages] = useState<{ [key: string]: string }>(
+    {}
+  );
 
   const [newCampaign, setNewCampaign] = useState<Campaign>({
     name: "Test Name",
@@ -73,13 +77,22 @@ function App() {
       return;
     }
 
-    await createCampaign(newCampaign);
-    fetchUserBalance();
-    fetchCampaigns();
+    try {
+      await createCampaign(newCampaign);
+      fetchUserBalance();
+      fetchCampaigns();
+      setErrorMessages({});
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        setErrorMessages(error.response.data);
+      } else {
+        alert("An unexpected error occurred.");
+      }
+    }
   };
 
   const handleKeywordChange = async (
-    _: React.SyntheticEvent,
+    event: React.ChangeEvent<{}>,
     values: string[]
   ) => {
     setNewCampaign({ ...newCampaign, keywords: values });
@@ -109,6 +122,15 @@ function App() {
         <Typography variant="h2" color="secondary" gutterBottom>
           Create Campaign
         </Typography>
+        {Object.keys(errorMessages).length > 0 && (
+          <Box mb={2}>
+            {Object.entries(errorMessages).map(([key, message]) => (
+              <Alert severity="error" key={key}>
+                {message}
+              </Alert>
+            ))}
+          </Box>
+        )}
         <TextField
           label="Name"
           value={newCampaign.name}
@@ -116,6 +138,8 @@ function App() {
             setNewCampaign({ ...newCampaign, name: e.target.value })
           }
           margin="normal"
+          error={!!errorMessages.name}
+          helperText={errorMessages.name}
         />
         <Autocomplete
           multiple
@@ -124,7 +148,13 @@ function App() {
           value={newCampaign.keywords}
           onChange={handleKeywordChange}
           renderInput={(params) => (
-            <TextField {...params} label="Keywords" margin="normal" />
+            <TextField
+              {...params}
+              label="Keywords"
+              margin="normal"
+              error={!!errorMessages.keywords}
+              helperText={errorMessages.keywords}
+            />
           )}
         />
         <TextField
