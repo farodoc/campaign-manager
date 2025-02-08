@@ -11,13 +11,13 @@ import "./App.css";
 function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [newCampaign, setNewCampaign] = useState<Campaign>({
-    name: "",
-    keywords: [],
-    bidAmount: 0,
-    campaignFund: 0,
-    status: false,
-    town: "",
-    radius: 0,
+    name: "Test name",
+    keywords: ["Test keyword 1", "Test keyword 2"],
+    bidAmount: 1,
+    campaignFund: 1,
+    status: true,
+    town: "Test Town",
+    radius: 1,
   });
 
   useEffect(() => {
