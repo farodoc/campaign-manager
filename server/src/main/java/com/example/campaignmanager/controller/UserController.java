@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
 
@@ -13,7 +13,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users/{id}/balance")
+    @GetMapping("/{id}/balance")
     public ResponseEntity<Double> getUserBalance(@PathVariable Long id) {
         double balance = userService.getUserBalance(id);
         return ResponseEntity.ok(balance);

@@ -63,6 +63,12 @@ public class CampaignService {
 
     @Transactional
     public void deleteCampaign(Long id) {
+        Optional<Campaign> campaign = campaignRepository.findById(id);
+
+        if (campaign.isPresent()) {
+            userService.updateUserBalance(USER_ID, campaign.get().getCampaignFund());
+        }
+
         campaignRepository.deleteById(id);
     }
 }

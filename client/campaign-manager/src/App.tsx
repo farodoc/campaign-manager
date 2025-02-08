@@ -4,24 +4,48 @@ import {
   createCampaign,
   updateCampaign,
   deleteCampaign,
+  getUserBalance,
+  getKeywordSuggestions,
+  getTowns,
 } from "./api";
 import { Campaign } from "./types";
+import {
+  Container,
+  TextField,
+  Checkbox,
+  Button,
+  Typography,
+  Card,
+  CardContent,
+  CardActions,
+  Box,
+  Autocomplete,
+  MenuItem,
+} from "@mui/material";
 import "./App.css";
 
 function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [towns, setTowns] = useState<string[]>([]);
+  // TODO: Currently only one keyword is supported, but the API supports multiple keywords
+  const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
+  const [userBalance, setUserBalance] = useState<number>(0);
+
   const [newCampaign, setNewCampaign] = useState<Campaign>({
-    name: "Test name",
-    keywords: ["Test keyword 1", "Test keyword 2"],
+    name: "Test Name",
+    keywords: ["blockchain"],
     bidAmount: 1,
     campaignFund: 1,
     status: true,
-    town: "Test Town",
+    town: "Krakow",
     radius: 1,
   });
 
   useEffect(() => {
     fetchCampaigns();
+    fetchUserBalance();
+    fetchTowns();
+    fetchKeywordSuggestions();
   }, []);
 
   const fetchCampaigns = async () => {
@@ -29,59 +53,91 @@ function App() {
     setCampaigns(response.data);
   };
 
+  const fetchUserBalance = async () => {
+    const balance = await getUserBalance();
+    setUserBalance(balance);
+  };
+
+  const fetchTowns = async () => {
+    const townsList = await getTowns();
+    setTowns(townsList);
+  };
+
+  const fetchKeywordSuggestions = async () => {
+    const suggestions = await getKeywordSuggestions();
+    setKeywordSuggestions(suggestions);
+  };
+
   const handleCreateCampaign = async () => {
+    if (newCampaign.campaignFund > userBalance) {
+      alert("Insufficient funds!");
+      return;
+    }
+
     await createCampaign(newCampaign);
+    fetchUserBalance();
     fetchCampaigns();
   };
 
-  const handleUpdateCampaign = async (id: number) => {
-    await updateCampaign(id, newCampaign);
+  const handleKeywordChange = async (value: string) => {
+    setNewCampaign({ ...newCampaign, keywords: [value] });
+  };
+
+  const handleUpdateCampaign = async (id: number, campaign: Campaign) => {
+    await updateCampaign(id, campaign);
+    fetchUserBalance();
     fetchCampaigns();
   };
 
   const handleDeleteCampaign = async (id: number) => {
     await deleteCampaign(id);
+    fetchUserBalance();
     fetchCampaigns();
   };
 
   return (
-    <div className="App">
-      <h1>Campaign Manager</h1>
-      <div>
-        <h2>Create Campaign</h2>
-        <input
-          type="text"
-          placeholder="Name"
+    <Container className="container">
+      <Typography variant="h1" color="primary" gutterBottom>
+        Campaign Manager
+      </Typography>
+      <Typography variant="h5" color="secondary">
+        Account Balance: ${userBalance.toFixed(2)}
+      </Typography>
+      <Box mb={4}>
+        <Typography variant="h2" color="secondary" gutterBottom>
+          Create Campaign
+        </Typography>
+        <TextField
+          label="Name"
           value={newCampaign.name}
           onChange={(e) =>
             setNewCampaign({ ...newCampaign, name: e.target.value })
           }
+          margin="normal"
         />
-        <input
-          type="text"
-          placeholder="Keywords"
-          value={newCampaign.keywords.join(", ")}
-          onChange={(e) =>
-            setNewCampaign({
-              ...newCampaign,
-              keywords: e.target.value.split(", "),
-            })
-          }
+        <Autocomplete
+          freeSolo
+          options={keywordSuggestions}
+          onInputChange={(_, value) => handleKeywordChange(value)}
+          renderInput={(params) => (
+            <TextField {...params} label="Keywords" margin="normal" />
+          )}
         />
-        <input
+        <TextField
+          label="Bid Amount"
           type="number"
-          placeholder="Bid Amount"
           value={newCampaign.bidAmount}
           onChange={(e) =>
             setNewCampaign({
               ...newCampaign,
-              bidAmount: parseFloat(e.target.value),
+              bidAmount: Math.max(1, parseFloat(e.target.value)),
             })
           }
+          margin="normal"
         />
-        <input
+        <TextField
+          label="Campaign Fund"
           type="number"
-          placeholder="Campaign Fund"
           value={newCampaign.campaignFund}
           onChange={(e) =>
             setNewCampaign({
@@ -89,53 +145,95 @@ function App() {
               campaignFund: parseFloat(e.target.value),
             })
           }
+          margin="normal"
         />
-        <input
-          type="checkbox"
+        <Checkbox
           checked={newCampaign.status}
           onChange={(e) =>
             setNewCampaign({ ...newCampaign, status: e.target.checked })
           }
         />
-        <input
-          type="text"
-          placeholder="Town"
+        <TextField
+          select
+          label="Town"
           value={newCampaign.town}
           onChange={(e) =>
             setNewCampaign({ ...newCampaign, town: e.target.value })
           }
-        />
-        <input
+          margin="normal"
+        >
+          {towns.map((town) => (
+            <MenuItem key={town} value={town}>
+              {town}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          label="Radius (km)"
           type="number"
-          placeholder="Radius"
           value={newCampaign.radius}
           onChange={(e) =>
             setNewCampaign({ ...newCampaign, radius: parseInt(e.target.value) })
           }
+          margin="normal"
         />
-        <button onClick={handleCreateCampaign}>Create</button>
-      </div>
-      <div>
-        <h2>Campaigns</h2>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreateCampaign}
+        >
+          Create
+        </Button>
+      </Box>
+      <Box>
+        <Typography variant="h2" color="secondary" gutterBottom>
+          Campaigns
+        </Typography>
         {campaigns.map((campaign) => (
-          <div key={campaign.id}>
-            <h3>{campaign.name}</h3>
-            <p>Keywords: {campaign.keywords.join(", ")}</p>
-            <p>Bid Amount: {campaign.bidAmount}</p>
-            <p>Campaign Fund: {campaign.campaignFund}</p>
-            <p>Status: {campaign.status ? "Active" : "Inactive"}</p>
-            <p>Town: {campaign.town}</p>
-            <p>Radius: {campaign.radius}</p>
-            <button onClick={() => handleUpdateCampaign(campaign.id!)}>
-              Update
-            </button>
-            <button onClick={() => handleDeleteCampaign(campaign.id!)}>
-              Delete
-            </button>
-          </div>
+          <Card key={campaign.id} className="custom-card">
+            <CardContent>
+              <Typography variant="h3" color="primary">
+                {campaign.name}
+              </Typography>
+              <Typography color="textSecondary">
+                Keywords: {campaign.keywords.join(", ")}
+              </Typography>
+              <Typography color="textSecondary">
+                Bid Amount: {campaign.bidAmount}
+              </Typography>
+              <Typography color="textSecondary">
+                Campaign Fund: {campaign.campaignFund}
+              </Typography>
+              <Typography color="textSecondary">
+                Status: {campaign.status ? "Active" : "Inactive"}
+              </Typography>
+              <Typography color="textSecondary">
+                Town: {campaign.town}
+              </Typography>
+              <Typography color="textSecondary">
+                Radius: {campaign.radius}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleUpdateCampaign(campaign.id!, newCampaign)}
+              >
+                Update
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleDeleteCampaign(campaign.id!)}
+              >
+                Delete
+              </Button>
+            </CardActions>
+          </Card>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 }
 

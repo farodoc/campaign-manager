@@ -7,8 +7,16 @@ import java.util.List;
 
 @Service
 public class SuggestionService {
-    private final static List<String> KEYWORDS = List.of("keyword1", "keyword2", "keyword3");
-    private final static List<String> TOWNS = List.of("town1", "town2", "town3");
+    private final static List<String> KEYWORDS = List.of(
+            "technology", "science", "education", "healthcare", "finance",
+            "marketing", "programming", "artificial intelligence", "machine learning", "blockchain"
+    );
+
+    private final static List<String> TOWNS = List.of(
+            "Warszawa", "Krakow", "Lodz", "Wroclaw", "Poznan",
+            "Gdansk", "Szczecin", "Bydgoszcz", "Lublin", "Katowice"
+    );
+
 
     public List<String> getKeywordSuggestions() {
         return new ArrayList<>(KEYWORDS);
