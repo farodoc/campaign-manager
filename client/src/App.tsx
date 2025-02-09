@@ -142,6 +142,7 @@ function App() {
           margin="normal"
           error={!!errorMessages.name}
           helperText={errorMessages.name}
+          sx={{ margin: 1 }}
         />
         <TextField
           label="Bid Amount"
@@ -156,6 +157,7 @@ function App() {
           margin="normal"
           error={!!errorMessages.bidAmount}
           helperText={errorMessages.bidAmount}
+          sx={{ margin: 1 }}
         />
         <TextField
           label="Campaign Fund"
@@ -170,6 +172,7 @@ function App() {
           margin="normal"
           error={!!errorMessages.campaignFund}
           helperText={errorMessages.campaignFund}
+          sx={{ margin: 1 }}
         />
         <TextField
           select
@@ -181,6 +184,7 @@ function App() {
           margin="normal"
           error={!!errorMessages.town}
           helperText={errorMessages.town}
+          sx={{ margin: 1 }}
         >
           {towns.map((town) => (
             <MenuItem key={town} value={town}>
@@ -198,6 +202,7 @@ function App() {
           margin="normal"
           error={!!errorMessages.radius}
           helperText={errorMessages.radius}
+          sx={{ margin: 1 }}
         />
         <Autocomplete
           multiple
@@ -214,6 +219,7 @@ function App() {
               helperText={errorMessages.keywords}
             />
           )}
+          sx={{ margin: 1 }}
         />
         <FormControlLabel
           control={
@@ -225,12 +231,13 @@ function App() {
             />
           }
           label="Active"
-          sx={{ color: "black" }}
+          sx={{ color: "black", margin: 1 }}
         />
         <Button
           variant="contained"
           color="primary"
           onClick={handleCreateCampaign}
+          sx={{ margin: 1 }}
         >
           Create
         </Button>
