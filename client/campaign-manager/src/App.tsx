@@ -134,6 +134,7 @@ function App() {
         )}
         <TextField
           label="Name"
+          className="custom-textfield"
           value={newCampaign.name}
           onChange={(e) =>
             setNewCampaign({ ...newCampaign, name: e.target.value })
@@ -141,22 +142,6 @@ function App() {
           margin="normal"
           error={!!errorMessages.name}
           helperText={errorMessages.name}
-        />
-        <Autocomplete
-          multiple
-          freeSolo
-          options={keywordSuggestions}
-          value={newCampaign.keywords}
-          onChange={handleKeywordChange}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Keywords"
-              margin="normal"
-              error={!!errorMessages.keywords}
-              helperText={errorMessages.keywords}
-            />
-          )}
         />
         <TextField
           label="Bid Amount"
@@ -186,18 +171,6 @@ function App() {
           error={!!errorMessages.campaignFund}
           helperText={errorMessages.campaignFund}
         />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={newCampaign.status}
-              onChange={(e) =>
-                setNewCampaign({ ...newCampaign, status: e.target.checked })
-              }
-            />
-          }
-          label="Active"
-          sx={{ color: "black" }}
-        />
         <TextField
           select
           label="Town"
@@ -225,6 +198,34 @@ function App() {
           margin="normal"
           error={!!errorMessages.radius}
           helperText={errorMessages.radius}
+        />
+        <Autocomplete
+          multiple
+          freeSolo
+          options={keywordSuggestions}
+          value={newCampaign.keywords}
+          onChange={handleKeywordChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Keywords"
+              margin="normal"
+              error={!!errorMessages.keywords}
+              helperText={errorMessages.keywords}
+            />
+          )}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={newCampaign.status}
+              onChange={(e) =>
+                setNewCampaign({ ...newCampaign, status: e.target.checked })
+              }
+            />
+          }
+          label="Active"
+          sx={{ color: "black" }}
         />
         <Button
           variant="contained"
