@@ -1,5 +1,6 @@
 package com.example.campaignmanager.dto;
 
+import com.example.campaignmanager.annotations.CampaignFundBidAmountConstraint;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@CampaignFundBidAmountConstraint
 public class CampaignRequest {
     @NotBlank(message = "name should not be null")
     private String name;
@@ -17,10 +19,10 @@ public class CampaignRequest {
     @NotEmpty(message = "at least one keyword should be present")
     private List<String> keywords;
 
-    @Min(value = 1, message = "bid amount should be greater or equal to 1")
+    @DecimalMin(value = "0.1", message = "bid amount should be greater than or equal to 0.1")
     private Double bidAmount;
 
-    @Min(value = 0, message = "campaign fund should be greater or equal to 0")
+    @DecimalMin(value = "0.1", message = "campaign fund should be greater than or equal to 0.1")
     private Double campaignFund;
 
     @NotNull(message = "status should not be null")

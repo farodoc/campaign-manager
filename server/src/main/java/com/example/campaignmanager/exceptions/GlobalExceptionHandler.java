@@ -21,6 +21,10 @@ public class GlobalExceptionHandler {
             map.put(fieldError.getField(), fieldError.getDefaultMessage());
         });
 
+        exception.getBindingResult().getGlobalErrors().forEach(globalError -> {
+            map.put(globalError.getObjectName(), globalError.getDefaultMessage());
+        });
+
         return map;
     }
 
