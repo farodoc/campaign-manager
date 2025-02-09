@@ -22,6 +22,7 @@ import {
   Autocomplete,
   MenuItem,
   Alert,
+  FormControlLabel,
 } from "@mui/material";
 import "./App.css";
 
@@ -38,10 +39,10 @@ function App() {
     name: "Test Name",
     keywords: ["blockchain"],
     bidAmount: 1,
-    campaignFund: 1,
+    campaignFund: 15,
     status: true,
     town: "Krakow",
-    radius: 1,
+    radius: 7,
   });
 
   useEffect(() => {
@@ -92,7 +93,7 @@ function App() {
   };
 
   const handleKeywordChange = async (
-    event: React.ChangeEvent<{}>,
+    _: React.SyntheticEvent,
     values: string[]
   ) => {
     setNewCampaign({ ...newCampaign, keywords: values });
@@ -112,14 +113,14 @@ function App() {
 
   return (
     <Container className="container">
-      <Typography variant="h1" color="primary" gutterBottom>
+      <Typography variant="h1" color="black" gutterBottom>
         Campaign Manager
       </Typography>
-      <Typography variant="h5" color="secondary">
+      <Typography variant="h5" color="black" gutterBottom>
         Account Balance: ${userBalance.toFixed(2)}
       </Typography>
       <Box mb={4}>
-        <Typography variant="h2" color="secondary" gutterBottom>
+        <Typography variant="h2" color="primary" gutterBottom>
           Create Campaign
         </Typography>
         {Object.keys(errorMessages).length > 0 && (
@@ -164,10 +165,12 @@ function App() {
           onChange={(e) =>
             setNewCampaign({
               ...newCampaign,
-              bidAmount: Math.max(1, parseFloat(e.target.value)),
+              bidAmount: parseFloat(e.target.value),
             })
           }
           margin="normal"
+          error={!!errorMessages.bidAmount}
+          helperText={errorMessages.bidAmount}
         />
         <TextField
           label="Campaign Fund"
@@ -180,12 +183,20 @@ function App() {
             })
           }
           margin="normal"
+          error={!!errorMessages.campaignFund}
+          helperText={errorMessages.campaignFund}
         />
-        <Checkbox
-          checked={newCampaign.status}
-          onChange={(e) =>
-            setNewCampaign({ ...newCampaign, status: e.target.checked })
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={newCampaign.status}
+              onChange={(e) =>
+                setNewCampaign({ ...newCampaign, status: e.target.checked })
+              }
+            />
           }
+          label="Active"
+          sx={{ color: "black" }}
         />
         <TextField
           select
@@ -195,6 +206,8 @@ function App() {
             setNewCampaign({ ...newCampaign, town: e.target.value })
           }
           margin="normal"
+          error={!!errorMessages.town}
+          helperText={errorMessages.town}
         >
           {towns.map((town) => (
             <MenuItem key={town} value={town}>
@@ -210,6 +223,8 @@ function App() {
             setNewCampaign({ ...newCampaign, radius: parseInt(e.target.value) })
           }
           margin="normal"
+          error={!!errorMessages.radius}
+          helperText={errorMessages.radius}
         />
         <Button
           variant="contained"
@@ -220,15 +235,13 @@ function App() {
         </Button>
       </Box>
       <Box>
-        <Typography variant="h2" color="secondary" gutterBottom>
+        <Typography variant="h2" color="primary" gutterBottom>
           Campaigns
         </Typography>
         {campaigns.map((campaign) => (
           <Card key={campaign.id} className="custom-card">
             <CardContent>
-              <Typography variant="h3" color="primary">
-                {campaign.name}
-              </Typography>
+              <Typography variant="h3">{campaign.name}</Typography>
               <Typography color="textSecondary">
                 Keywords: {campaign.keywords.join(", ")}
               </Typography>
@@ -258,7 +271,7 @@ function App() {
               </Button>
               <Button
                 variant="contained"
-                color="secondary"
+                color="error"
                 onClick={() => handleDeleteCampaign(campaign.id!)}
               >
                 Delete
